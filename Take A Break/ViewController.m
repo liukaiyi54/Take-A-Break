@@ -24,8 +24,21 @@
     [self.button addTarget:self action:@selector(didTapButton:) forControlEvents:UIControlEventTouchUpInside];
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    if ([self stateOfButton]) {
+        [self.button setTitle:@"Stop" forState:UIControlStateNormal];
+        [self.button setBackgroundColor:UIColorFromRGB(0xff6666)];
+    } else {
+        [self.button setTitle:@"Start" forState:UIControlStateNormal];
+        [self.button setBackgroundColor:UIColorFromRGB(0x66ccff)];
+    }
+}
+
 - (void)didTapButton:(UIButton *)sender {
     [self toggleState];
+    [self saveButtonState];
 }
 
 - (void)toggleState {
@@ -41,7 +54,16 @@
 }
 
 - (void)saveButtonState {
-    
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    if ([self.button.titleLabel.text isEqualToString:@"Start"]) {
+        [userDefaults setBool:YES forKey:@"ButtonState"];
+    } else {
+        [userDefaults setBool:NO forKey:@"ButtonState"];
+    }
+}
+
+- (BOOL)stateOfButton {
+    return [[NSUserDefaults standardUserDefaults] boolForKey:@"ButtonState"];
 }
 
 - (void)scheduleNotification {
